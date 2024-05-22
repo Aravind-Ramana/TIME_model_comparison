@@ -4,7 +4,7 @@ import pandas as pd
 large_csv_file = "temp_route_data.csv"
 
 # Read the first 100 rows
-df_first_100_rows = pd.read_csv(large_csv_file, nrows=100)
+df_first_100_rows = pd.read_csv(large_csv_file, nrows=10)
 
 # Save the first 100 rows to a new CSV file
 small_csv_file = "temp_route_data_small).csv"
