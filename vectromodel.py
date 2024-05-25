@@ -15,18 +15,21 @@ EPSILON = 1e-8
 
 def efficiency(omega):
     import math
-    m = 200  # mass of car
-    u1 = 0.001  # static friction coefficient
-    rho = 1.225  # air density
-    a = 1  # frontal area of car
-    Cd = 0.092  # coefficient of drag
-    r_in = 0.18  # inner radius of wheel
-    r_out = 0.27  # outer radius of wheel
-    Ta = 300
-    visc = 1.48 * 10**-5  # kinematic viscosity of air
+    m = 270  # mass of car
+    u1 = 0.0045 # static friction coefficient
+    rho = 1.192 # air density
+    a = 0.92 # frontal area of car
+    Cd = 0.098 # coefficient of drag
+    r_in = 0.214 # inner radius of wheel
+    r_out = 0.2785  # outer radius of wheel
+    Ta = 295
+    visc = 1.524 * 10**-5  # kinematic viscosity of air
     v_rotor = omega * r_in  # circumferential speed of rotor
+    v_car  = omega*r_out  
     RN = v_rotor * r_out / visc  # Reynolds number
     g = 1.5 * 10**-3  # air gap spacing between stator and rotor
+  
+    
     pi = math.pi
     
     if RN > 0.8 * 10**5:
@@ -61,21 +64,21 @@ def efficiency(omega):
     t_f = 0.5 * Cf * rho * pi * (omega ** 2) * ((r_out ** 5) - (r_in ** 5))  # frictional torque due to dynamic rolling resistance
     Pf = t_f * omega  # wheel losses (frictional losses)
     P_out = t * omega  # output power
-    P_in = P_out + Pf + Pc + Pe + Pw  # input power
-    P_loss = Pf + Pc + Pe + Pw  # total power loss
+    P_in = P_out + Pc + Pe + Pw  # input power
+    P_loss = Pc + Pe + Pw  # total power loss
     eta = P_out * 100 / P_in  # efficiency of motor
     return eta
 class Motor:
     def __init__(self, wheel_radius, mass, wheels, CDA, zero_speed_crr):
-        self.wheel_radius = wheel_radius  # inches
+        self.wheel_radius = wheel_radius  
         self.mass = mass  # kg
         self.CDA = CDA
-        self.zero_speed_crr = zero_speed_crr  # 0.003
+        self.zero_speed_crr = zero_speed_crr  
         self.no_of_wheels = wheels
 
         # Precompute constants
-        self.rolling_resistance = self.mass * 9.8 * 0.05  # Assume coefficient of friction = 0.01
-        self.wind_speed_factor = 12.57
+        self.rolling_resistance = self.mass * 9.81 * 0.0045  # Assume coefficient of friction = 0.01
+        self.wind_speed_factor = 12.57*5/18
         self.wind_dir_factor = np.cos(np.radians(10))
 
     def calculate_power(self, speed, acceleration, slope):
@@ -86,15 +89,16 @@ class Motor:
         eta = efficiency(omega) / 100  # Convert efficiency to fraction
 
         # Calculate power required to overcome rolling resistance and aerodynamic drag
-        drag_force = 0.5 * self.CDA * config.AirDensity * (speed * 2 + self.wind_speed_factor * 2 - 2 * speed * self.wind_speed_factor * self.wind_dir_factor)
+        drag_force = 0.5 * self.CDA * config.AirDensity * (speed ** 2 + self.wind_speed_factor ** 2 - 2 * speed * self.wind_speed_factor * self.wind_dir_factor)
 
         power = (
             self.rolling_resistance + drag_force
-            + (self.mass * acceleration / eta)  # Adjusted for efficiency
+            + self.mass * acceleration   # Adjusted for efficiency
             + self.mass * config.g * np.sin(slope)
-        ) * abs(speed)
-
+        ) * abs(speed)/eta
+        print(drag_force*speed,self.mass * acceleration*speed, self.rolling_resistance * speed)
         return max(power, 0)
+
 class ElectricCar:
     def __init__(self, motor):
         # Motor

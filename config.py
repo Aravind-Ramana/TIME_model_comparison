@@ -20,7 +20,7 @@ Wheels = 3
 
 # Resistive Coeff
 CDA = 0.092
-ZeroSpeedCrr = 0.003
+ZeroSpeedCrr = 0.0045
 
 # Solar Panel Data
 PanelArea = 6  # m^2
@@ -28,8 +28,8 @@ PanelEfficiency = 0.19
 
 # ---------------------------------------------------------------------------------------------------------
 # Physical Constants
-AirDensity = 1.225  # kg/m^3
-g = GravityAcc = 9.8  # m/s^2
+AirDensity = 1.192 # kg/m^3
+g = GravityAcc = 9.81 # m/s^2
 
 # ---------------------------------------------------------------------------------------------------------
 # Car Constraints

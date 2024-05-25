@@ -2,22 +2,22 @@ import config
 import numpy as np
 import math
 def efficiency(omega):
-    m = 200  # mass of car
-    u1 = 0.001  # static friction coefficient
-    rho = 1.225  # air density
+    m = 270  # mass of car
+    u1 = 0.0045 # static friction coefficient
+    rho = 1.192 # air density
     a = 1  # frontal area of car
     Cd = 0.092  # coefficient of drag
-    r_in = 0.18  # inner radius of wheel
-    r_out = 0.27  # outer radius of wheel
-    Ta = 300
-    visc = 1.48 * 10**-5  # kinematic viscosity of air
+    r_in = 0.214 # inner radius of wheel
+    r_out = 0.2785  # outer radius of wheel
+    Ta = 295
+    visc = 1.524 * 10**-5  # kinematic viscosity of air
     v_rotor = omega * r_in  # circumferential speed of rotor
     RN = v_rotor * r_out / visc  # Reynolds number
     g = 1.5 * 10**-3  # air gap spacing between stator and rotor
     pi = math.pi
     
     if RN > 0.8 * 10**5:
-        # Regime III
+         # Regime III
         Cf = 0.08 / (((g / r_out) ** 0.167) * (RN ** 0.25))
     else:
         # Regime I
@@ -115,7 +115,7 @@ def constraint_battery2(v_prof, car, solar_panel, route_df, safe_battery_capacit
     # print(min_bl, (safe_battery_capacity - max_bl))
     return (safe_battery_capacity - max_bl)
 def constraint_acceleration(v_prof, car, route_df):
-    max_accel = 0
+    max_accel = 2
     for i in range(len(v_prof) - 1):
         dt = car.calculate_dt(v_prof[i], v_prof[i + 1], route_df.iloc[i, 0])
         omega = v_prof[i] / car.motor.wheel_radius
